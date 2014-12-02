@@ -58,8 +58,8 @@ func (a *adapter) sendHTTP(res *hal.Response, strings ...string) error {
 		payload, _ := json.Marshal(s)
 		data := url.Values{}
 		data.Set("payload", string(payload))
-		hal.Logger.Debug("u is: %s",u)
-		hal.Logger.Debug("payload is: %s",payload)
+		hal.Logger.Debug("u is: ",u)
+		hal.Logger.Debug("payload is: ",string(payload))
 		client := http.Client{}
 		_, err := client.PostForm(u, data)
 		if err != nil {
