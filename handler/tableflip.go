@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/danryan/hal"
+	"github.com/djosephsen/hal"
 )
 
 // TableFlip is an example of a Handler

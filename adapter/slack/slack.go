@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/danryan/env"
-	"github.com/danryan/hal"
+	"github.com/djosephsen/hal"
 	"github.com/davecgh/go-spew/spew"
 	irc "github.com/thoj/go-ircevent"
 )

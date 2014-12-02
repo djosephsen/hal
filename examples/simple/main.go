@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/danryan/hal"
-	_ "github.com/danryan/hal/adapter/shell"
-	_ "github.com/danryan/hal/store/memory"
+	"github.com/djosephsen/hal"
+	_ "github.com/djosephsen/hal/adapter/shell"
+	_ "github.com/djosephsen/hal/store/memory"
 	"os"
 )
 
