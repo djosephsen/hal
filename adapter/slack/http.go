@@ -62,7 +62,7 @@ func (a *adapter) sendHTTP(res *hal.Response, strings ...string) error {
 		hal.Logger.Debug("payload is: ",string(payload))
 		client := http.Client{}
 		resp, err := client.PostForm(u, data)
-		hal.Logger.Debug("reply was: ",String(resp.Body))
+		hal.Logger.Debug("reply was: ",string(resp.Body))
 		if err != nil {
 			return err
 		}
