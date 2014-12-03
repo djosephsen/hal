@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
+	"bytes"
 	"github.com/djosephsen/hal"
 )
 
@@ -62,7 +62,10 @@ func (a *adapter) sendHTTP(res *hal.Response, strings ...string) error {
 		hal.Logger.Debug("payload is: ",string(payload))
 		client := http.Client{}
 		resp, err := client.PostForm(u, data)
-		hal.Logger.Debug("reply was: ",string(resp.Body))
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(resp.Body)
+		s := buf.String()
+		hal.Logger.Debug("reply was: ",(s))
 		if err != nil {
 			return err
 		}
