@@ -65,7 +65,7 @@ func (a *adapter) sendHTTP(res *hal.Response, strings ...string) error {
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(resp.Body)
 		rs := buf.String()
-		hal.Logger.Debug("reply was: ",(s))
+		hal.Logger.Debug("reply was: ",(rs))
 		if err != nil {
 			return err
 		}
