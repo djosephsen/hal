@@ -13,14 +13,14 @@ type Chore struct {
 	Room		string
 	State 	string
 	Resp 		*Response
-	Run 		func() error
+	Run 		func(*Response) error
 	Next 		time.Time
 	Timer 	*time.Timer
 }
 
 func (c *Chore) Trigger(){
 	c.State="running"
-	go c.Run()
+	go c.Run(c.Resp)
 	expr := cronexpr.MustParse(c.Schedule)
 	if expr.Next(time.Now()).IsZero(){
 		c.Next = expr.Next(time.Now())
