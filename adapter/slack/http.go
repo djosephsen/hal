@@ -60,9 +60,6 @@ func (a *adapter) sendHTTP(res *hal.Response, strings ...string) error {
 		data.Set("payload", string(payload))
 		client := http.Client{}
 		resp, err := client.PostForm(u, data)
-		buf := new(bytes.Buffer)
-		buf.ReadFrom(resp.Body)
-		rs := buf.String()
 		if err != nil {
 			return err
 		}
