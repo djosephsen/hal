@@ -15,6 +15,7 @@ type Robot struct {
 	Adapter    Adapter
 	Store      Store
 	handlers   []handler
+	chores	  []Chore
 	Users      *UserMap
 	Auth       *Auth
 	signalChan chan os.Signal
