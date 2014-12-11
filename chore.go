@@ -67,6 +67,8 @@ func (robot *Robot) Schedule(chores ...*Chore) error{
 		}else{
 			Logger.Debug("invalid schedule",c.Schedule)
 			c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Schedule)
+			Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
+			robot.Chores = append(robot.Chores, *c)
 	    	return fmt.Errorf("Chore.go: invalid schedule: %v", c.Schedule)
 		}
 	}
