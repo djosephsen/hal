@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"bytes"
 	"github.com/djosephsen/hal"
 )
 
