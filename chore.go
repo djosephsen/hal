@@ -56,8 +56,8 @@ func (robot *Robot) Schedule(chores ...*Chore) error{
 }
 
 func KillChore(c *Chore) error{
-	Logger.Debug("Stopping: ",c.Name)
-	c.State=`Halted`
+	Logger.Debug(`Stopping: `,c.Name)
+	c.State=`Halted by request`
 	c.Timer.Stop()
 	return nil
 }
@@ -82,10 +82,10 @@ func StartChore(c *Chore) error{
 					Logger.Debug("pre-existing timer found, resetting to: ",dur)
 					c.Timer.Reset(dur) // auto go-routine'd
 				}
-			c.State=fmt.Sprintf("Chore: %s scheduled at: %s",c.Name,c.Next.String())
+			c.State=fmt.Sprintf("Scheduled: %s",c.Next.String())
 			}else{
 				Logger.Debug("invalid duration",dur)
-				c.State=fmt.Sprintf("NOT Scheduled (invalid duration: %s)",dur)
+				c.State=fmt.Sprintf("Halted. (invalid duration: %s)",dur)
 			}
 		}
 	Logger.Debug("all set! Chore: ",c.Name, "scheduled at: ",c.Next)
