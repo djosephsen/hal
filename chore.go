@@ -23,13 +23,13 @@ func (c *Chore) Trigger(){
 	go c.Run(c.Resp)
 	expr := cronexpr.MustParse(c.Schedule)
 	if expr.Next(time.Now()).IsZero(){
+		Logger.Debug("invalid schedule",c.Schedule)
+		c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Schedule)
+	}else{
 		c.Next = expr.Next(time.Now())
 		dur := time.Now().Sub(c.Next)
 		c.Timer.Reset(dur)
 		c.State=fmt.Sprintf("Scheduled: %s",c.Next.String())
-	}else{
-		Logger.Debug("invalid schedule",c.Schedule)
-		c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Schedule)
 	}
 }
 
@@ -57,6 +57,12 @@ func (robot *Robot) Schedule(chores ...*Chore) error{
 	for _, c := range chores {
 		expr := cronexpr.MustParse(c.Schedule)
 		if expr.Next(time.Now()).IsZero(){
+			Logger.Debug("invalid schedule",c.Schedule)
+			c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Schedule)
+			Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
+			robot.Chores = append(robot.Chores, *c)
+	    	return fmt.Errorf("Chore.go: invalid schedule: %v", c.Schedule)
+		}else{
 			c.Resp = NewResponseFromThinAir(robot, c.Room)
 			c.Next = expr.Next(time.Now())
 			dur := time.Now().Sub(c.Next)
@@ -64,12 +70,6 @@ func (robot *Robot) Schedule(chores ...*Chore) error{
 			c.State=fmt.Sprintf("Scheduled: %s",c.Next.String())
 			Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
 			robot.Chores = append(robot.Chores, *c)
-		}else{
-			Logger.Debug("invalid schedule",c.Schedule)
-			c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Schedule)
-			Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
-			robot.Chores = append(robot.Chores, *c)
-	    	return fmt.Errorf("Chore.go: invalid schedule: %v", c.Schedule)
 		}
 	}
 	return nil
