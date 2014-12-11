@@ -56,6 +56,8 @@ func (robot *Robot) Schedule(chores ...*Chore) error{
 }
 
 func KillChore(c *Chore) error{
+	Logger.Debug("Stopping: ",c.Name)
+	c.State=`Halted`
 	c.Timer.Stop()
 	return nil
 }
@@ -94,6 +96,8 @@ func GetChoreByName(name string, robot *Robot) *Chore{
 	for _, c := range robot.Chores {
 		if c.Name == name{
 			return &c
+		}else{
+			Logger.Debug("chore not found: ",name)
 		}
 	}
 	return nil
