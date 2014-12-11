@@ -62,6 +62,7 @@ func (robot *Robot) Schedule(chores ...*Chore) error{
 			dur := time.Now().Sub(c.Next)
 			c.Timer = time.AfterFunc(dur, c.Trigger) // auto go-routine'd
 			c.State=fmt.Sprintf("Scheduled: %s",c.Next.String())
+			Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
 			robot.Chores = append(robot.Chores, *c)
 		}else{
 			Logger.Debug("invalid schedule",c.Schedule)
