@@ -50,7 +50,7 @@ func (robot *Robot) Schedule(chores ...*Chore) error{
 		c.Resp = NewResponseFromThinAir(robot, c.Room)
 		StartChore(c)
 		Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
-		robot.Chores = append(robot.Chores, *c)
+		robot.Chores = append(robot.Chores, c)
 	}
 	return nil
 }
