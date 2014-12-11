@@ -47,6 +47,7 @@ func NewResponseFromThinAir(robot *Robot, room string) *Response {
 // initialize and schedule the chores
 func (robot *Robot) Schedule(chores ...*Chore) error{
 	for _, c := range chores {
+		c.Resp = NewResponseFromThinAir(robot, c.Room)
 		StartChore(c)
 		Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
 		robot.Chores = append(robot.Chores, *c)
@@ -60,25 +61,32 @@ func KillChore(c *Chore) error{
 }
 
 func StartChore(c *Chore) error{
+	Logger.Debug("Re-Starting: ",c.Name)
 	expr := cronexpr.MustParse(c.Sched)
 	if expr.Next(time.Now()).IsZero(){
 		Logger.Debug("invalid schedule",c.Sched)
 		c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Sched)
 	}else{
+		Logger.Debug("valid Schedule: ",c.Sched)
 		c.Next = expr.Next(time.Now())
 		dur := c.Next.Sub(time.Now())
 			if dur>0{
+				Logger.Debug("valid duration: ",dur)
+				Logger.Debug("testing timer.. ")
 				if c.Timer == nil{
+					Logger.Debug("creating new timer ")
 					c.Timer = time.AfterFunc(dur, c.Trigger) // auto go-routine'd
 				}else{
+					Logger.Debug("pre-existing timer found, resetting to: ",dur)
 					c.Timer.Reset(dur) // auto go-routine'd
 				}
-				c.State=fmt.Sprintf("Chore: %s scheduled at: %s",c.Name,c.Next.String())
+			c.State=fmt.Sprintf("Chore: %s scheduled at: %s",c.Name,c.Next.String())
 			}else{
 				Logger.Debug("invalid duration",dur)
 				c.State=fmt.Sprintf("NOT Scheduled (invalid duration: %s)",dur)
 			}
 		}
+	Logger.Debug("all set! Chore: ",c.Name, "scheduled at: ",c.Next)
 	return nil
 }
 
