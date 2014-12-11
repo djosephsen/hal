@@ -61,6 +61,11 @@ func run() int {
 		}),
 	)
 
+	//while we're at it, schedule a chore
+	robot.Schedule(
+		handlers.ChoreTest,
+	)
+
 	if err := robot.Run(); err != nil {
 		hal.Logger.Error(err)
 		return 1
