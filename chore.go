@@ -95,7 +95,7 @@ func StartChore(c *Chore) error{
 func GetChoreByName(name string, robot *Robot) *Chore{
 	for _, c := range robot.Chores {
 		if c.Name == name{
-			return &c
+			return c
 		}else{
 			Logger.Debug("chore not found: ",name)
 		}
