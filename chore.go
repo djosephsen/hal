@@ -22,17 +22,7 @@ func (c *Chore) Trigger(){
 	Logger.Debug("Triggered: ",c.Name)
 	c.State="running"
 	go c.Run(c.Resp)
-	expr := cronexpr.MustParse(c.Sched)
-	if expr.Next(time.Now()).IsZero(){
-		Logger.Debug("invalid schedule",c.Sched)
-		c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Sched)
-	}else{
-		c.Next = expr.Next(time.Now())
-		dur := c.Next.Sub(time.Now())
-		Logger.Debug("Triggering in: ",dur)
-		c.Timer.Reset(dur)
-		c.State=fmt.Sprintf("Scheduled: %s",c.Next.String())
-	}
+	StartChore(c)
 }
 
 // NewResponseFromThinAir returns a new Response object pointing at the general room
@@ -57,19 +47,7 @@ func NewResponseFromThinAir(robot *Robot, room string) *Response {
 // initialize and schedule the chores
 func (robot *Robot) Schedule(chores ...*Chore) error{
 	for _, c := range chores {
-		expr := cronexpr.MustParse(c.Sched)
-		c.Resp = NewResponseFromThinAir(robot, c.Room)
-		c.Next = expr.Next(time.Now())
-		if expr.Next(time.Now()).IsZero(){
-			Logger.Debug("invalid schedule",c.Sched)
-			c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Sched)
-	    	return fmt.Errorf("Chore.go: invalid schedule: %v", c.Sched)
-		}else{
-			dur := c.Next.Sub(time.Now())
-			Logger.Debug("Triggering in: ",dur)
-			c.Timer = time.AfterFunc(dur, c.Trigger) // auto go-routine'd
-			c.State=fmt.Sprintf("Scheduled: %s",c.Next.String())
-		}
+		StartChore(c)
 		Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
 		robot.Chores = append(robot.Chores, *c)
 	}
@@ -78,6 +56,29 @@ func (robot *Robot) Schedule(chores ...*Chore) error{
 
 func KillChore(c *Chore) error{
 	c.Timer.Stop()
+	return nil
+}
+
+func StartChore(c *Chore) error{
+	expr := cronexpr.MustParse(c.Sched)
+	if expr.Next(time.Now()).IsZero(){
+		Logger.Debug("invalid schedule",c.Sched)
+		c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Sched)
+	}else{
+		c.Next = expr.Next(time.Now())
+		dur := c.Next.Sub(time.Now())
+			if dur>0{
+				if c.Timer == nil{
+					c.Timer = time.AfterFunc(dur, c.Trigger) // auto go-routine'd
+				}else{
+					c.Timer.Reset(dur) // auto go-routine'd
+				}
+				c.State=fmt.Sprintf("Chore: %s scheduled at: %s",c.Name,c.Next.String())
+			}else{
+				Logger.Debug("invalid duration",dur)
+				c.State=fmt.Sprintf("NOT Scheduled (invalid duration: %s)",dur)
+			}
+		}
 	return nil
 }
 
