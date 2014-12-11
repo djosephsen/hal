@@ -10,7 +10,9 @@ type Chore struct {
 	Name 		string
 	Usage 	string
 	Schedule string
+	Room		string
 	State 	string
+	Resp 		*Response
 	Run 		func() error
 	Next 		time.Time
 	Timer 	*time.Timer
@@ -32,33 +34,30 @@ func (c *Chore) Trigger(){
 }
 
 // NewResponseFromThinAir returns a new Response object pointing at the general room
-func NewResponseFromThinAir(robot *Robot, msg *Message) *Response {
+func NewResponseFromThinAir(robot *Robot, room string) *Response {
    return &Response{
       Robot: robot,
-      Envelope: &hal.Envelope{
-         Room: msg.Room,
-			User: Config.Name
+      Envelope: &Envelope{
+         Room: room,
+			User: &User{
+				ID: `0`,
+				Name: Config.Name,
+			},
       },
-      Message: &hal.Message{
-			Room: 
-			Text: `thin air!`
-			Type: `chore`
-   }
+      Message: &Message{
+			Room: room,
+			Text: `thin air!`,
+			Type: `chore`,
+   	},
+	}
 }
-
 
 // initialize and schedule the chores
 func (robot *Robot) Schedule(chores ...*Chore) error{
 	for _, c := range chores {
 		expr := cronexpr.MustParse(c.Schedule)
 		if expr.Next(time.Now()).IsZero(){
-			c.Resp = &hal.Response{ 
-				Robot: robot,
-				Envelope: &hal.Envelope{
-					User:robot.Adapter.botname
-
-
-					
+			c.Resp = NewResponseFromThinAir(robot, c.Room)
 			c.Next = expr.Next(time.Now())
 			dur := time.Now().Sub(c.Next)
 			c.Timer = time.AfterFunc(dur, c.Trigger) // auto go-routine'd
