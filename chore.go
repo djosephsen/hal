@@ -62,7 +62,7 @@ func (robot *Robot) Schedule(chores ...*Chore) error{
 			dur := time.Now().Sub(c.Next)
 			c.Timer = time.AfterFunc(dur, c.Trigger) // auto go-routine'd
 			c.State=fmt.Sprintf("Scheduled: %s",c.Next.String())
-			robot.chores = append(robot.chores, *c)
+			robot.Chores = append(robot.Chores, *c)
 		}else{
 			Logger.Debug("invalid schedule",c.Schedule)
 			c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Schedule)
@@ -78,12 +78,10 @@ func KillChore(c *Chore) error{
 }
 
 func GetChoreByName(name string, robot *Robot) *Chore{
-	for _, c := range robot.chores {
+	for _, c := range robot.Chores {
 		if c.Name == name{
 			return &c
 		}
 	}
 	return nil
 }
-
-
