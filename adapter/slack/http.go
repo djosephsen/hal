@@ -58,14 +58,11 @@ func (a *adapter) sendHTTP(res *hal.Response, strings ...string) error {
 		payload, _ := json.Marshal(s)
 		data := url.Values{}
 		data.Set("payload", string(payload))
-		hal.Logger.Debug("u is: ",u)
-		hal.Logger.Debug("payload is: ",string(payload))
 		client := http.Client{}
 		resp, err := client.PostForm(u, data)
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(resp.Body)
 		rs := buf.String()
-		hal.Logger.Debug("reply was: ",(rs))
 		if err != nil {
 			return err
 		}
