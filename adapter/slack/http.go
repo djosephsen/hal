@@ -58,7 +58,7 @@ func (a *adapter) sendHTTP(res *hal.Response, strings ...string) error {
 		data := url.Values{}
 		data.Set("payload", string(payload))
 		client := http.Client{}
-		resp, err := client.PostForm(u, data)
+		_, err := client.PostForm(u, data)
 		if err != nil {
 			return err
 		}
