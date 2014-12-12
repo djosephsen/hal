@@ -28,7 +28,8 @@ func (c *Chore) Trigger(){
 		c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Sched)
 	}else{
 		c.Next = expr.Next(time.Now())
-		dur := time.Now().Sub(c.Next)
+		dur := c.Next.Sub(time.Now())
+		Logger.Debug("Triggering in: ",dur)
 		c.Timer.Reset(dur)
 		c.State=fmt.Sprintf("Scheduled: %s",c.Next.String())
 	}
@@ -64,7 +65,8 @@ func (robot *Robot) Schedule(chores ...*Chore) error{
 			c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Sched)
 	    	return fmt.Errorf("Chore.go: invalid schedule: %v", c.Sched)
 		}else{
-			dur := time.Now().Sub(c.Next)
+			dur := c.Next.Sub(time.Now())
+			Logger.Debug("Triggering in: ",dur)
 			c.Timer = time.AfterFunc(dur, c.Trigger) // auto go-routine'd
 			c.State=fmt.Sprintf("Scheduled: %s",c.Next.String())
 		}
