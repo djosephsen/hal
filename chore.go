@@ -9,7 +9,7 @@ import (
 type Chore struct {
 	Name 		string
 	Usage 	string
-	Schedule string
+	Sched 	string
 	Room		string
 	State 	string
 	Resp 		*Response
@@ -21,10 +21,10 @@ type Chore struct {
 func (c *Chore) Trigger(){
 	c.State="running"
 	go c.Run(c.Resp)
-	expr := cronexpr.MustParse(c.Schedule)
+	expr := cronexpr.MustParse(c.Sched)
 	if expr.Next(time.Now()).IsZero(){
-		Logger.Debug("invalid schedule",c.Schedule)
-		c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Schedule)
+		Logger.Debug("invalid schedule",c.Sched)
+		c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Sched)
 	}else{
 		c.Next = expr.Next(time.Now())
 		dur := time.Now().Sub(c.Next)
@@ -55,22 +55,20 @@ func NewResponseFromThinAir(robot *Robot, room string) *Response {
 // initialize and schedule the chores
 func (robot *Robot) Schedule(chores ...*Chore) error{
 	for _, c := range chores {
-		expr := cronexpr.MustParse(c.Schedule)
+		expr := cronexpr.MustParse(c.Sched)
+		c.Resp = NewResponseFromThinAir(robot, c.Room)
+		c.Next = expr.Next(time.Now())
 		if expr.Next(time.Now()).IsZero(){
-			Logger.Debug("invalid schedule",c.Schedule)
-			c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Schedule)
-			Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
-			robot.Chores = append(robot.Chores, *c)
-	    	return fmt.Errorf("Chore.go: invalid schedule: %v", c.Schedule)
+			Logger.Debug("invalid schedule",c.Sched)
+			c.State=fmt.Sprintf("NOT Scheduled (invalid Schedule: %s)",c.Sched)
+	    	return fmt.Errorf("Chore.go: invalid schedule: %v", c.Sched)
 		}else{
-			c.Resp = NewResponseFromThinAir(robot, c.Room)
-			c.Next = expr.Next(time.Now())
 			dur := time.Now().Sub(c.Next)
 			c.Timer = time.AfterFunc(dur, c.Trigger) // auto go-routine'd
 			c.State=fmt.Sprintf("Scheduled: %s",c.Next.String())
-			Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
-			robot.Chores = append(robot.Chores, *c)
 		}
+		Logger.Debug("appending chore: ",c.Name, " to robot.Chores")
+		robot.Chores = append(robot.Chores, *c)
 	}
 	return nil
 }
