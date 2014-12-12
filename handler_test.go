@@ -1,7 +1,7 @@
 package hal_test
 
 import (
-	"github.com/danryan/hal"
+	"github.com/djosephsen/hal"
 )
 
 func ExampleHandler_hear() {

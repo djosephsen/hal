@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/daneharrigan/hipchat"
 	"github.com/danryan/env"
-	"github.com/danryan/hal"
+	"github.com/djosephsen/hal"
 	"strings"
 )
 

@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
-	"github.com/danryan/hal"
+	"github.com/djosephsen/hal"
 )
 
 func (a *adapter) newMessageFromHTTP(req *slackRequest) *hal.Message {
@@ -54,7 +53,7 @@ func (a *adapter) sendHTTP(res *hal.Response, strings ...string) error {
 			s.Fields = i.([]map[string]interface{})
 		}
 
-		u := fmt.Sprintf("https://%s.slack.com/services/hooks/incoming-webhook?token=%s", a.team, a.token)
+		u := fmt.Sprintf("https://%s.slack.com/services/hooks/hubot?token=%s", a.team, a.token)
 		payload, _ := json.Marshal(s)
 		data := url.Values{}
 		data.Set("payload", string(payload))

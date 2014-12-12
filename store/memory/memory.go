@@ -2,7 +2,7 @@ package memory
 
 import (
 	"fmt"
-	"github.com/danryan/hal"
+	"github.com/djosephsen/hal"
 )
 
 func init() {

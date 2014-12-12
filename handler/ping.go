@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/danryan/hal"
+	"github.com/djosephsen/hal"
 )
 
 type ping struct{}
