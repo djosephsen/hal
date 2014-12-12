@@ -19,6 +19,7 @@ type Chore struct {
 }
 
 func (c *Chore) Trigger(){
+	Logger.Debug("Triggered: ",c.Name)
 	c.State="running"
 	go c.Run(c.Resp)
 	expr := cronexpr.MustParse(c.Sched)
